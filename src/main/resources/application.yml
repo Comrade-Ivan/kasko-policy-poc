@@ -3,15 +3,15 @@ spring:
   application:
     name: kasko-service
   jpa:
-    hibernate:
-      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        types:
-          jsonb: com.vladmihalcea.hibernate.type.json.JsonBinaryType
+        jdbc:
+          time_zone: UTC
+          lob:
+            non_contextual_creation: true
   actuator:
     endpoints:
       web:
@@ -23,7 +23,7 @@ spring:
 spring:
   config:
     activate:
-      on-profile: "dev"
+      on-profile: "test"
   datasource:
     url: jdbc:h2:mem:kasko_dev;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
     username: sa

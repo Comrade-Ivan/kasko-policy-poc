@@ -4,6 +4,7 @@ import lombok.*;
 import jakarta.persistence.*;
 import ru.motorinsurance.kasko.enums.VehicleUsagePurpose;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -24,8 +25,8 @@ public class Vehicle {
     @Column(name = "mileage")
     private Integer mileage;
 
-    @Column(name = "actual_value", precision = 12, scale = 2)
-    private Double actualValue;
+    @Column(name = "actual_value", columnDefinition = "numeric(19,2)")
+    private BigDecimal actualValue;
 
     @Column(name = "purchase_date", nullable = false)
     private LocalDate purchaseDate;

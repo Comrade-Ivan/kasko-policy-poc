@@ -5,7 +5,8 @@ import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import ru.motorinsurance.kasko.enums.PaymentMethod;
 import ru.motorinsurance.kasko.enums.PolicyStatus;
 
@@ -38,7 +39,7 @@ public class Policy {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "premium_amount", precision = 19, scale = 2)
+    @Column(name = "premium_amount", columnDefinition = "numeric(19,2)")
     private BigDecimal premiumAmount;
 
     @Enumerated(EnumType.STRING)
@@ -58,8 +59,9 @@ public class Policy {
     @Column(name = "s3_pdf_path", length = 255)
     private String s3PdfPath;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "drivers", columnDefinition = "jsonb")
-    private Drivers drivers;
+    private String drivers;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "holder_id")
