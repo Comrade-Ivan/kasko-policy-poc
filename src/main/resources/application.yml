@@ -3,10 +3,15 @@ spring:
   application:
     name: kasko-service
   jpa:
+    hibernate:
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        types:
+          jsonb: com.vladmihalcea.hibernate.type.json.JsonBinaryType
   actuator:
     endpoints:
       web:

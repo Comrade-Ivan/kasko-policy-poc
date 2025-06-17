@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.Type;
 import ru.motorinsurance.kasko.enums.PaymentMethod;
 import ru.motorinsurance.kasko.enums.PolicyStatus;
 
@@ -58,7 +59,7 @@ public class Policy {
     private String s3PdfPath;
 
     @Column(name = "drivers", columnDefinition = "jsonb")
-    private String drivers;
+    private Drivers drivers;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "holder_id")
