@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Drivers {
-    private String type; // "Список" или "Неограничено"
+    private String type;
     private List<Driver> drivers;
 
     @Data

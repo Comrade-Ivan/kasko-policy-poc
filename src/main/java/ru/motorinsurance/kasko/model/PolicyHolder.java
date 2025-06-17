@@ -4,34 +4,37 @@ import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
+import ru.motorinsurance.kasko.enums.HolderType;
+
 import java.util.List;
 
-@Data
+@Entity
+@Table(name = "policy_holders")
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PolicyHolder {
-    private String type; // "Физ.Лицо" или "Юр.Лицо"
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "holder_id")
+    private Long holderId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 10)
+    private HolderType type;
+
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
-    private Contact contact;
-    private List<Document> documents;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Contact {
-        private String phone;
-        private String email;
-    }
+    @Column(name = "phone", nullable = false, length = 12)
+    private String phone;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Document {
-        private String type;
-        private String number;
-        private String s3Path;
-    }
+    @Column(name = "email", length = 50)
+    private String email;
+
+    @OneToMany(mappedBy = "policyHolder", fetch = FetchType.LAZY)
+    private List<Policy> policies; // Один страхователь → много полисов
 }
