@@ -67,7 +67,7 @@ public class Policy {
     @JoinColumn(name = "holder_id")
     private PolicyHolder policyHolder;
 
-    @OneToOne(mappedBy = "policy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "policy", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Vehicle vehicle;
 
     @OneToMany(mappedBy = "policy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

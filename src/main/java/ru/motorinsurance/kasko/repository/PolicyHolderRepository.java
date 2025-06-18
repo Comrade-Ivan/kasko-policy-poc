@@ -16,5 +16,8 @@ public interface PolicyHolderRepository extends JpaRepository<PolicyHolder, Long
     @Query("SELECT ph FROM PolicyHolder ph WHERE ph.email = :email")
     Optional<PolicyHolder> findByEmail(String email);
 
+    @Query("SELECT ph FROM PolicyHolder ph WHERE ph.name = :name AND ph.phone = :phone")
+    Optional<PolicyHolder> findByNameAndPhone(String name, String phone);
+
     boolean existsByPhone(String phone);
 }

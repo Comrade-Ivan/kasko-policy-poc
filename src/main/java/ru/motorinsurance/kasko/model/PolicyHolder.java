@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import jakarta.persistence.*;
 import ru.motorinsurance.kasko.enums.HolderType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,5 +37,5 @@ public class PolicyHolder {
     private String email;
 
     @OneToMany(mappedBy = "policyHolder", fetch = FetchType.LAZY)
-    private List<Policy> policies; // Один страхователь → много полисов
+    private List<Policy> policies = new ArrayList<>(); // Один страхователь → много полисов
 }
