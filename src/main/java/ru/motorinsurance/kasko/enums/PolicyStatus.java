@@ -7,6 +7,7 @@ public enum PolicyStatus {
     PRE_CALCULATION("Предрасчет"),
     QUOTE_NEW("Котировка_Новое"),
     QUOTE_SENT_FOR_APPROVAL("Котировка_ОтправленаНаСогласование"),
+    QUOTE_REWORK("Котировка_Доработка"),
     QUOTE_ISSUED("Котировка_Выпущена"),
     POLICY_NEW("Полис_Новый"),
     POLICY_AWAITING_PAYMENT("Полис_Ожидает_Оплаты"),

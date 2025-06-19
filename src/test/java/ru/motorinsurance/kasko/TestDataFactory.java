@@ -1,6 +1,5 @@
 package ru.motorinsurance.kasko;
 
-import org.springframework.stereotype.Component;
 import ru.motorinsurance.kasko.dto.ContactDto;
 import ru.motorinsurance.kasko.dto.PolicyHolderDto;
 import ru.motorinsurance.kasko.dto.PolicyResponse;
@@ -14,7 +13,6 @@ import ru.motorinsurance.kasko.model.Vehicle;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Component
 public class TestDataFactory {
 
     public static final String TEST_VIN = "XTA21099765432101";
@@ -46,6 +44,17 @@ public class TestDataFactory {
                 .isCancelled(false)
                 .vehicle(vehicle)
                 .policyHolder(holder)
+                .build();
+    }
+
+    public static Policy createTestPolicy() {
+        return Policy.builder()
+                .policyId("KASKO-2024-123456")
+                .createdAt(LocalDateTime.now())
+                .status(PolicyStatus.PRE_CALCULATION)
+                .isCancelled(false)
+                .vehicle(createTestVehicle())
+                .policyHolder(createTestPolicyHolder())
                 .build();
     }
 
