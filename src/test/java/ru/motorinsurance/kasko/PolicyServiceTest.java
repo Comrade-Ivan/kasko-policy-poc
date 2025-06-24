@@ -13,16 +13,17 @@ import ru.motorinsurance.kasko.enums.VehicleUsagePurpose;
 import ru.motorinsurance.kasko.mappers.PolicyMapper;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.model.PolicyHolder;
+import ru.motorinsurance.kasko.model.StatusTransition;
 import ru.motorinsurance.kasko.model.Vehicle;
 import ru.motorinsurance.kasko.repository.PolicyHolderRepository;
 import ru.motorinsurance.kasko.repository.PolicyRepository;
+import ru.motorinsurance.kasko.repository.StatusTransitionRepository;
 import ru.motorinsurance.kasko.repository.VehicleRepository;
 import ru.motorinsurance.kasko.service.PolicyService;
+import ru.motorinsurance.kasko.service.status.PolicyStatusTransitionService;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +49,12 @@ class PolicyServiceTest {
 
     @InjectMocks
     private PolicyService policyService;
+
+    @Mock
+    private PolicyStatusTransitionService policyStatusTransitionService;
+
+    @Mock
+    private StatusTransitionRepository statusTransitionRepository;
 
     @Test
     void createPolicy_WithNewVehicleAndNewHolder_ShouldCreateAllEntities() {
@@ -194,6 +201,52 @@ class PolicyServiceTest {
         ));
     }
 
+    @Test
+    void policyChangeStatus_ShouldSuccessOnValidTransition() {
+        Policy savedPolicy = createTestPolicy();
+        PolicyStatus initialStatus = PolicyStatus.PRE_CALCULATION;
+        PolicyStatus targetStatus = PolicyStatus.QUOTE_NEW;
+
+        savedPolicy.setStatus(initialStatus);
+
+        PolicyChangeStatusRequest request = PolicyChangeStatusRequest.builder()
+                .policyId("1")
+                .targetStatus(targetStatus)
+                .build();
+        ArgumentCaptor<StatusTransition> transitionArgumentCaptor = ArgumentCaptor.forClass(StatusTransition.class);
+
+        when(policyRepository.findByPolicyId(anyString())).thenReturn(Optional.of(savedPolicy));
+        when(statusTransitionRepository.save(transitionArgumentCaptor.capture())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        policyService.changePolicyStatus(request);
+
+        StatusTransition savedTransition = transitionArgumentCaptor.getValue();
+
+        verify(policyStatusTransitionService).validateTransition(savedPolicy, targetStatus);
+        verify(policyRepository).save(argThat(p -> p.getStatus().equals(targetStatus)));
+        assertEquals(savedTransition.getFromStatus(), initialStatus.getRussianName());
+        assertEquals(savedTransition.getToStatus(), targetStatus.getRussianName());
+        assertNotNull(savedTransition.getPolicy());
+
+    }
+
+    @Test
+    void policyChangeStatus_ShouldThrowExceptionOnFailedValidation() {
+        Policy savedPolicy = createTestPolicy();
+        PolicyStatus targetStatus = PolicyStatus.QUOTE_NEW;
+
+        PolicyChangeStatusRequest request = PolicyChangeStatusRequest.builder()
+                .policyId("1")
+                .targetStatus(targetStatus)
+                .build();
+
+        when(policyRepository.findByPolicyId(anyString())).thenReturn(Optional.of(savedPolicy));
+        doThrow(new IllegalStateException("Transition invalidation")).when(policyStatusTransitionService).validateTransition(savedPolicy, targetStatus);
+
+        assertThrows(IllegalStateException.class, () -> policyService.changePolicyStatus(request));
+        verify(policyRepository, never()).save(savedPolicy);
+    }
+
     private PolicyCreateRequest createTestRequest() {
         return PolicyCreateRequest.builder()
                 .vehicle(VehicleDto.builder()
@@ -201,7 +254,7 @@ class PolicyServiceTest {
                         .mileage(45000)
                         .actualValue(BigDecimal.valueOf(1250000))
                         .purchaseDate("15.05.2022")
-                        .usagePurpose(VehicleUsagePurpose.PERSONAL)
+                        .usagePurpose(VehicleUsagePurpose.PERSONAL.getRussianName())
                         .registrationNumber("А123БВ777")
                         .build())
                 .policyHolder(PolicyHolderDto.builder()

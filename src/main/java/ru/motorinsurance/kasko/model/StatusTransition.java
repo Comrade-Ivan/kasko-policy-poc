@@ -6,6 +6,7 @@ import java.time.*;
 
 @Entity
 @Table(name = "status_transitions")
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

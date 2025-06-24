@@ -15,11 +15,14 @@ public record TransitionRule (Set<PolicyStatus> allowedTargetStatuses,Map<Policy
         }
 
         Set<String> guardErrors = new HashSet<>();
-        guardsMap.get(targetStatus).forEach((guard, errorMessage) -> {
-            if (!guard.test(policy)) {
-                guardErrors.add(errorMessage);
-            }
-        });
+        Map<Predicate<Policy>, String> guards = guardsMap.get(targetStatus);
+        if (guards != null) {
+            guards.forEach((guard, errorMessage) -> {
+                if (!guard.test(policy)) {
+                    guardErrors.add(errorMessage);
+                }
+            });
+        }
 
         if (!guardErrors.isEmpty()) {
             throw new IllegalStateException(guardErrors.stream().reduce("", (x,y) -> x + ", " + y));

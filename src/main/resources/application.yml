@@ -17,13 +17,19 @@ spring:
       web:
         exposure:
           include: health, info, metrics
-
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+server:
+  tomcat:
+    uri-encoding: UTF-8
 ---
-# Настройки для профиля dev
+# Настройки для профиля test
 spring:
-  config:
-    activate:
-      on-profile: "test"
+  profiles:
+    active: "test"
   datasource:
     url: jdbc:h2:mem:kasko_dev;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
     username: sa
@@ -51,25 +57,28 @@ spring:
       password: example
   kafka:
     bootstrap-servers: localhost:29092
-
-logging:
-  level:
-    root: INFO
-    ru.motorinsurance: DEBUG
-  logstash:
-    url: localhost:5044 # Адрес Logstash
-  file:
-    path: ./logs
-    name: ${logging.file.path}/${spring.application.name}.log
+  logging:
+    level:
+      root: INFO
+      ru.motorinsurance: DEBUG
+    logstash:
+      url: localhost:5044 # Адрес Logstash
+    file:
+      path: ./logs
+      name: ${logging.file.path}/${spring.application.name}.log
+  security:
+    user:
+      name: admin
+      password: admin123
+      roles: ADMIN
 
 ---
 # Настройки для профиля prod
 spring:
-  config:
-    activate:
-      on-profile: "prod"
+  profiles:
+    active: "prod"
   datasource:
-    url: jdbc:postgresql://kasko-postgres:5432/kasko_db
+    url: jdbc:postgresql://localhost:5432/kasko_db
     username: kasko
     password: kasko123
     driver-class-name: org.postgresql.Driver
@@ -80,11 +89,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   redis:
-    host: kasko-redis
+    host: localhost
     port: 6379
   data:
     mongodb:
-      host: kasko-mongo
+      host: localhost
       port: 27017
       database: kasko_db
       username: root
@@ -92,14 +101,24 @@ spring:
       authentication-database: admin
   kafka:
     bootstrap-servers: kafka:9092
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, prometheus, env
-
-logging:
-  level:
-    root: INFO
-    org.hibernate.SQL: WARN
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    default-schema: public
+    user: kasko
+    password: kasko123
+    url: jdbc:postgresql://localhost:5432/kasko_db
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health, info, prometheus, env
+  logging:
+    level:
+      root: INFO
+      org.hibernate.SQL: WARN
+  security:
+    user:
+      name: admin
+      password: admin123
+      roles: ADMIN

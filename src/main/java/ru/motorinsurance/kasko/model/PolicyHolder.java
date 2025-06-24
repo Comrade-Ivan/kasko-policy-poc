@@ -37,5 +37,6 @@ public class PolicyHolder {
     private String email;
 
     @OneToMany(mappedBy = "policyHolder", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Policy> policies = new ArrayList<>(); // Один страхователь → много полисов
 }

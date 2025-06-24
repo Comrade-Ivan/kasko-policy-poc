@@ -13,7 +13,7 @@ public enum HolderType {
         this.russianName = russianName;
     }
 
-    public static HolderType fromString(String type) {
+    public static HolderType fromRussianName(String type) {
         for (HolderType holderType : values() ) {
             if (holderType.russianName.equalsIgnoreCase(type)) {
                 return holderType;

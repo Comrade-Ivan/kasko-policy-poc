@@ -33,9 +33,11 @@ public class VehicleDto {
     @NotNull(message = "Цель использования не может быть пустой")
     @ValidEnumValue(
             enumClass = VehicleUsagePurpose.class,
-            message = "Недопустимая цель использования ТС. Допустимые: {allowedValues}"
+            message = "Недопустимая цель использования ТС. Допустимые: {allowedValues}",
+            ignoreCase = true,
+            useRussianName = true
     )
-    private VehicleUsagePurpose usagePurpose; // "Личное" или "Коммерческое"
+    private String usagePurpose; // "Личное" или "Коммерческое"
 
     private String registrationNumber; // Гос. номер (необязательное)
 }

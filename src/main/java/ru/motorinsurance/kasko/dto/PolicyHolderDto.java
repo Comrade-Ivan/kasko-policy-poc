@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import jakarta.validation.constraints.*;
 import lombok.NoArgsConstructor;
+import ru.motorinsurance.kasko.enums.HolderType;
+import ru.motorinsurance.kasko.validation.ValidEnumValue;
 
 @Data
 @Builder
@@ -13,6 +15,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PolicyHolderDto {
     @NotBlank
+    @ValidEnumValue(
+            enumClass = HolderType.class,
+            ignoreCase = true,
+            useRussianName = true,
+            message = "Неподходящий тип страхователя"
+    )
     private String type; // "Физ.Лицо" или "Юр.Лицо"
 
     @NotBlank

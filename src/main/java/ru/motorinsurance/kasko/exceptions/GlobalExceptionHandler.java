@@ -2,6 +2,7 @@ package ru.motorinsurance.kasko.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> String.format("%s: %s", error.getField(), error.getDefaultMessage()))
-                .collect(Collectors.toList());
+                .toList();
 
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now(),
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
                 .map(violation -> String.format("%s: %s",
                         violation.getPropertyPath(),
                         violation.getMessage()))
-                .collect(Collectors.toList());
+                .toList();
 
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now(),
@@ -86,6 +86,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, ex.getStatus());
     }
 
+    @ExceptionHandler(PolicyNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePolicyNotFound(PolicyNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                ex.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     // Обработка всех непредвиденных исключений
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
@@ -111,6 +123,7 @@ public class GlobalExceptionHandler {
     }
 
     // Базовый класс для бизнес-исключений
+    @Getter
     public static abstract class BusinessException extends RuntimeException {
         private final HttpStatus status;
         private final String error;
@@ -121,21 +134,5 @@ public class GlobalExceptionHandler {
             this.error = error;
         }
 
-        public HttpStatus getStatus() {
-            return status;
-        }
-
-        public String getError() {
-            return error;
-        }
-    }
-
-    // Пример кастомного исключения
-    public static class PolicyNotFoundException extends BusinessException {
-        public PolicyNotFoundException(String policyId) {
-            super(HttpStatus.NOT_FOUND,
-                    "Policy Not Found",
-                    String.format("Полис с ID %s не найден", policyId));
-        }
     }
 }

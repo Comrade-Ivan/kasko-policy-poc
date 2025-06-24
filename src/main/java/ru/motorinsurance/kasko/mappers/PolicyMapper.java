@@ -4,6 +4,7 @@ import org.mapstruct.*;
 import ru.motorinsurance.kasko.dto.PolicyHolderDto;
 import ru.motorinsurance.kasko.dto.PolicyResponse;
 import ru.motorinsurance.kasko.dto.VehicleDto;
+import ru.motorinsurance.kasko.enums.HolderType;
 import ru.motorinsurance.kasko.enums.VehicleUsagePurpose;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.model.PolicyHolder;
@@ -32,9 +33,13 @@ public interface PolicyMapper {
     VehicleDto toVehicleDto(Vehicle entity);
 
     // PolicyHolder mapping
+    @Mapping(target = "phone", source = "contact.phone")
+    @Mapping(target = "email", source = "contact.email")
+    @Mapping(target = "policies", ignore = true)
     PolicyHolder toPolicyHolderEntity(PolicyHolderDto dto);
 
-    //@Mapping(target = "documents", ignore = true) // Документы обрабатываются отдельно
+    //TODO: @Mapping(target = "documents", ignore = true) // Документы обрабатываются отдельно
+    @InheritInverseConfiguration(name = "toPolicyHolderEntity")
     PolicyHolderDto toPolicyHolderDto(PolicyHolder entity);
 
     // Методы для обновления
@@ -58,5 +63,13 @@ public interface PolicyMapper {
 
     default String mapUsagePurpose(VehicleUsagePurpose purpose) {
         return purpose != null ? purpose.getRussianName() : null;
+    }
+
+    default HolderType mapHolderType(String value) {
+        return value != null ? HolderType.fromRussianName(value) : null;
+    }
+
+    default String mapHolderType(HolderType holderType) {
+        return holderType != null ? holderType.getRussianName() : null;
     }
 }

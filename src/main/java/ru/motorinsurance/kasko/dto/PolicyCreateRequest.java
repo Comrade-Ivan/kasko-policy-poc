@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,4 +25,6 @@ public class PolicyCreateRequest {
 
     @Valid //TODO: add validation
     private String drivers;
+
+    private LocalDate startDate;
 }
