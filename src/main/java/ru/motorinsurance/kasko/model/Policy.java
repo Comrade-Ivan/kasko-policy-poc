@@ -51,6 +51,7 @@ public class Policy {
     private PaymentMethod paymentMethod;
 
     @Column(name = "is_cancelled")
+    @Builder.Default
     private Boolean isCancelled = false;
 
     @Column(name = "cancellation_reason")

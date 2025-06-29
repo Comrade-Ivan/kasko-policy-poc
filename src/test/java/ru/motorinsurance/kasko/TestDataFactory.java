@@ -1,30 +1,30 @@
 package ru.motorinsurance.kasko;
 
-import ru.motorinsurance.kasko.dto.ContactDto;
-import ru.motorinsurance.kasko.dto.PolicyHolderDto;
-import ru.motorinsurance.kasko.dto.PolicyResponse;
-import ru.motorinsurance.kasko.dto.VehicleDto;
+import ru.motorinsurance.kasko.dto.*;
 import ru.motorinsurance.kasko.enums.HolderType;
 import ru.motorinsurance.kasko.enums.PolicyStatus;
+import ru.motorinsurance.kasko.enums.VehicleUsagePurpose;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.model.PolicyHolder;
 import ru.motorinsurance.kasko.model.Vehicle;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TestDataFactory {
 
-    public static final String TEST_VIN = "XTA21099765432101";
+    public static final String TEST_VIN = "XTA21099765432100";
     public static final String TEST_PHONE = "+79161234567";
     public static final String TEST_EMAIL = "test@example.com";
 
     public static Vehicle createTestVehicle() {
-        Vehicle vehicle = new Vehicle();
-        vehicle.setVin(TEST_VIN);
-        vehicle.setMileage(45000);
-        vehicle.setActualValue(BigDecimal.valueOf(1250000));
-        return vehicle;
+        return Vehicle.builder()
+                .vin(TEST_VIN)
+                .mileage(45000)
+                .actualValue(BigDecimal.valueOf(1250000))
+                .purchaseDate(LocalDate.now())
+                .build();
     }
 
     public static PolicyHolder createTestPolicyHolder() {
@@ -51,6 +51,7 @@ public class TestDataFactory {
         return Policy.builder()
                 .policyId("KASKO-2024-123456")
                 .createdAt(LocalDateTime.now())
+                .startDate(LocalDate.now())
                 .status(PolicyStatus.PRE_CALCULATION)
                 .isCancelled(false)
                 .vehicle(createTestVehicle())
@@ -82,6 +83,29 @@ public class TestDataFactory {
                         .phone(TEST_PHONE)
                         .email(TEST_EMAIL)
                         .build())
+                .build();
+    }
+
+    public static PolicyCreateRequest createTestRequest() {
+        return PolicyCreateRequest.builder()
+                .vehicle(VehicleDto.builder()
+                        .vin(TEST_VIN)
+                        .mileage(45000)
+                        .actualValue(BigDecimal.valueOf(1250000))
+                        .purchaseDate("15.05.2022")
+                        .usagePurpose(VehicleUsagePurpose.PERSONAL.getRussianName())
+                        .registrationNumber("А123БВ777")
+                        .build())
+                .policyHolder(PolicyHolderDto.builder()
+                        .type("Физ.Лицо")
+                        .name("Иванов Иван Иванович")
+                        .contact(ContactDto.builder()
+                                .phone(TEST_PHONE)
+                                .email(TEST_EMAIL)
+                                .build())
+                        .build())
+                .drivers("{\"type\":\"Список\",\"drivers\":[{\"fullName\":\"Иванов Иван Иванович\",\"experience\":10,\"age\":35}]}")
+                .startDate(LocalDate.now())
                 .build();
     }
 

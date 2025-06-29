@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/kasko_db
+    username: kasko
+    password: kasko123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  redis:
+    host: localhost
+    port: 6379
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: kasko_db
+      username: root
+      password: example
+      authentication-database: admin
+  kafka:
+    bootstrap-servers: kafka:9092
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    default-schema: public
+    user: kasko
+    password: kasko123
+    url: jdbc:postgresql://localhost:5432/kasko_db
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health, info, prometheus, env
+  logging:
+    level:
+      root: INFO
+      org.hibernate.SQL: WARN
+  security:
+    user:
+      name: admin
+      password: admin123
+      roles: ADMIN

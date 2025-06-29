@@ -3,8 +3,10 @@ package ru.motorinsurance.kasko.mappers;
 import org.mapstruct.*;
 import ru.motorinsurance.kasko.dto.PolicyHolderDto;
 import ru.motorinsurance.kasko.dto.PolicyResponse;
+import ru.motorinsurance.kasko.dto.PolicyUpdateDto;
 import ru.motorinsurance.kasko.dto.VehicleDto;
 import ru.motorinsurance.kasko.enums.HolderType;
+import ru.motorinsurance.kasko.enums.PolicyStatus;
 import ru.motorinsurance.kasko.enums.VehicleUsagePurpose;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.model.PolicyHolder;
@@ -44,6 +46,9 @@ public interface PolicyMapper {
 
     // Методы для обновления
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updatePolicyFromDto(PolicyUpdateDto dto, @MappingTarget Policy policy);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateVehicleFromDto(VehicleDto dto, @MappingTarget Vehicle entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -71,5 +76,13 @@ public interface PolicyMapper {
 
     default String mapHolderType(HolderType holderType) {
         return holderType != null ? holderType.getRussianName() : null;
+    }
+
+    default PolicyStatus mapPolicyStatus(String value) {
+        return value != null ? PolicyStatus.fromRussianName(value) : null;
+    }
+
+    default String mapPolicyStatus(PolicyStatus policyStatus) {
+        return policyStatus != null ? policyStatus.getRussianName() : null;
     }
 }

@@ -10,10 +10,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import ru.motorinsurance.kasko.dto.PolicyResponse;
+import ru.motorinsurance.kasko.dto.PolicyUpdateDto;
 import ru.motorinsurance.kasko.mappers.PolicyMapper;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.model.PolicyHolder;
 import ru.motorinsurance.kasko.model.Vehicle;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -37,5 +42,24 @@ public class PolicyMapperTest {
         assertEquals(response.getPolicyHolder().getContact().getPhone(), policyHolder.getPhone());
         assertEquals(response.getPolicyHolder().getContact().getEmail(), policyHolder.getEmail());
 
+    }
+
+    @Test
+    void policyUpdate_ShouldUpdateOnPolicyUpdateDto() {
+        Policy savedPolicy = createTestPolicy();
+        LocalDate newStartDate = LocalDate.now().plusDays(1L);
+        LocalDate newEndDate = LocalDate.now().plusYears(1L);
+        BigDecimal newPremiumAmount = BigDecimal.valueOf(1000000);
+        PolicyUpdateDto policyUpdateDto = PolicyUpdateDto.builder()
+                .startDate(newStartDate)
+                .endDate(newEndDate)
+                .premiumAmount(newPremiumAmount)
+                .build();
+
+        policyMapper.updatePolicyFromDto(policyUpdateDto, savedPolicy);
+
+        assertEquals(savedPolicy.getStartDate(), newStartDate);
+        assertEquals(savedPolicy.getEndDate(), newEndDate);
+        assertEquals(savedPolicy.getPremiumAmount(), newPremiumAmount);
     }
 }

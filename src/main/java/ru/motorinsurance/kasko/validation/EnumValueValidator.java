@@ -17,7 +17,6 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
 
     @Override
     public void initialize(ValidEnumValue constraintAnnotation) {
-        log.info("Validator initialized for enum: {}", constraintAnnotation.enumClass());
         this.enumClass = constraintAnnotation.enumClass();
         this.allowedValues = Arrays.stream(enumClass.getEnumConstants())
                 .map(Enum::name)
@@ -32,8 +31,6 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
         if (value == null) {
             return nullable;
         }
-
-        log.info("enum validation " + value.toString());
 
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate()

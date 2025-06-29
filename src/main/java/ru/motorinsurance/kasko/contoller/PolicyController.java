@@ -9,6 +9,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.motorinsurance.kasko.dto.PolicyChangeStatusRequest;
 import ru.motorinsurance.kasko.dto.PolicyCreateRequest;
 import ru.motorinsurance.kasko.dto.PolicyResponse;
+import ru.motorinsurance.kasko.dto.PolicyUpdateDto;
 import ru.motorinsurance.kasko.service.PolicyService;
 
 import java.net.URI;
@@ -40,7 +41,7 @@ public class PolicyController {
             @RequestBody @Valid PolicyChangeStatusRequest request) {
 
         request.setPolicyId(policyId); // Убедимся, что ID в пути и теле совпадают FIXME: Убрать policyId из DTO
-        PolicyResponse response = policyService.changePolicyStatus(request);
+        PolicyResponse response = policyService.changePolicyStatusAndReturnResponse(request);
 
         return ResponseEntity.ok(response);
     }
@@ -49,6 +50,15 @@ public class PolicyController {
     public ResponseEntity<PolicyResponse> getPolicy(@PathVariable String policyId) {
         PolicyResponse response = policyService.getPolicyById(policyId);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{policyId}")
+    public ResponseEntity<PolicyResponse> updatePolicy(
+            @PathVariable String policyId,
+            @RequestBody @Valid PolicyUpdateDto policyUpdateDto
+    ) {
+        PolicyResponse response = policyService.updatePolicyAndReturnResponse(policyId, policyUpdateDto);
         return ResponseEntity.ok(response);
     }
 }

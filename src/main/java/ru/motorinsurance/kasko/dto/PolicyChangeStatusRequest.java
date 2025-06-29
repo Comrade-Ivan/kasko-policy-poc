@@ -18,6 +18,10 @@ public class PolicyChangeStatusRequest {
     private String policyId;
 
     @NotNull
-    @ValidEnumValue(enumClass = PolicyStatus.class)
-    private PolicyStatus targetStatus;
+    @ValidEnumValue(
+            enumClass = PolicyStatus.class,
+            ignoreCase = true,
+            useRussianName = true
+    )
+    private String targetStatus;
 }

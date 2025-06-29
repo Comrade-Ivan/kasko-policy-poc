@@ -1,0 +1,120 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.liquibase.gradle' version '2.2.1'
+}
+
+group = "ru.motorinsurance"
+version = "0.0.1-SNAPSHOT"
+description = "PoC project for Casco Insurance"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    springCloudVersion = "2025.0.0"
+    lombokVersion = "1.18.30"
+    mapstructVersion = "1.5.5.Final"
+    logstashLogbackEncoderVersion = "7.4"
+    commonsIoVersion = "2.15.1"
+    hypersistenceUtilsVersion = "3.9.0"
+    mockitoVersion = "5.18.0"
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    // Spring Boot Starters
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+    // Spring Cloud
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // Database
+    implementation 'org.postgresql:postgresql'
+    implementation 'org.liquibase:liquibase-core'
+    liquibaseRuntime 'info.picocli:picocli:4.7.5'
+    liquibaseRuntime 'org.yaml:snakeyaml:1.33'
+
+    // Monitoring
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // MapStruct
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+    // Logging
+    implementation "net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}"
+
+    // Utilities
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "io.hypersistence:hypersistence-utils-hibernate-60:${hypersistenceUtilsVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0"
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'com.h2database:h2'
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    systemProperty 'file.encoding', 'UTF-8'
+    useJUnitPlatform()
+    jvmArgs = ["-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}"]
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
+task prod {
+    group 'build'
+    doFirst {
+        System.setProperty('spring.profiles.active', 'prod')
+    }
+}
+
+bootRun {
+    systemProperty 'spring.profiles.active', System.getProperty('spring.profiles.active') ?: 'default'
+}

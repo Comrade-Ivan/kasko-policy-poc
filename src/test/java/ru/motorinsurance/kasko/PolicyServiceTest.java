@@ -23,6 +23,7 @@ import ru.motorinsurance.kasko.service.PolicyService;
 import ru.motorinsurance.kasko.service.status.PolicyStatusTransitionService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -209,21 +210,18 @@ class PolicyServiceTest {
 
         savedPolicy.setStatus(initialStatus);
 
-        PolicyChangeStatusRequest request = PolicyChangeStatusRequest.builder()
-                .policyId("1")
-                .targetStatus(targetStatus)
-                .build();
         ArgumentCaptor<StatusTransition> transitionArgumentCaptor = ArgumentCaptor.forClass(StatusTransition.class);
 
         when(policyRepository.findByPolicyId(anyString())).thenReturn(Optional.of(savedPolicy));
+        when(policyRepository.updateStatus(anyString(), any(PolicyStatus.class))).thenReturn(1);
         when(statusTransitionRepository.save(transitionArgumentCaptor.capture())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
-        policyService.changePolicyStatus(request);
+        policyService.changePolicyStatus(savedPolicy.getPolicyId(), targetStatus);
 
         StatusTransition savedTransition = transitionArgumentCaptor.getValue();
 
         verify(policyStatusTransitionService).validateTransition(savedPolicy, targetStatus);
-        verify(policyRepository).save(argThat(p -> p.getStatus().equals(targetStatus)));
+        verify(policyRepository).updateStatus(savedPolicy.getPolicyId(), targetStatus);
         assertEquals(savedTransition.getFromStatus(), initialStatus.getRussianName());
         assertEquals(savedTransition.getToStatus(), targetStatus.getRussianName());
         assertNotNull(savedTransition.getPolicy());
@@ -235,38 +233,34 @@ class PolicyServiceTest {
         Policy savedPolicy = createTestPolicy();
         PolicyStatus targetStatus = PolicyStatus.QUOTE_NEW;
 
-        PolicyChangeStatusRequest request = PolicyChangeStatusRequest.builder()
-                .policyId("1")
-                .targetStatus(targetStatus)
-                .build();
-
         when(policyRepository.findByPolicyId(anyString())).thenReturn(Optional.of(savedPolicy));
         doThrow(new IllegalStateException("Transition invalidation")).when(policyStatusTransitionService).validateTransition(savedPolicy, targetStatus);
 
-        assertThrows(IllegalStateException.class, () -> policyService.changePolicyStatus(request));
+        assertThrows(IllegalStateException.class, () -> policyService.changePolicyStatus(savedPolicy.getPolicyId(), targetStatus));
         verify(policyRepository, never()).save(savedPolicy);
     }
 
-    private PolicyCreateRequest createTestRequest() {
-        return PolicyCreateRequest.builder()
-                .vehicle(VehicleDto.builder()
-                        .vin(TEST_VIN)
-                        .mileage(45000)
-                        .actualValue(BigDecimal.valueOf(1250000))
-                        .purchaseDate("15.05.2022")
-                        .usagePurpose(VehicleUsagePurpose.PERSONAL.getRussianName())
-                        .registrationNumber("А123БВ777")
-                        .build())
-                .policyHolder(PolicyHolderDto.builder()
-                        .type("Физ.Лицо")
-                        .name("Иванов Иван Иванович")
-                        .contact(ContactDto.builder()
-                                .phone(TEST_PHONE)
-                                .email(TEST_EMAIL)
-                                .build())
-                        .build())
-                .drivers("{\"type\":\"Список\",\"drivers\":[{\"fullName\":\"Иванов Иван Иванович\",\"experience\":10,\"age\":35}]}")
-                .build();
+    @Test
+    void policyUpdate_ShouldMapFromPolicyDto() {
+        Policy savedPolicy = createTestPolicy();
+        PolicyUpdateDto policyUpdateDto = PolicyUpdateDto.builder().build();
+        policyService.updatePolicy(savedPolicy, policyUpdateDto);
+
+        verify(policyMapper).updatePolicyFromDto(policyUpdateDto, savedPolicy);
+    }
+
+    @Test
+    void policyUpdateAndReturnResponse_ShouldMapToPolicyResponse() {
+        Policy savedPolicy = createTestPolicy();
+        PolicyUpdateDto policyUpdateDto = PolicyUpdateDto.builder().build();
+
+        when(policyRepository.findByPolicyId(anyString())).thenReturn(Optional.of(savedPolicy));
+
+        policyService.updatePolicyAndReturnResponse(savedPolicy.getPolicyId(), policyUpdateDto);
+
+        verify(policyRepository).findByPolicyId(savedPolicy.getPolicyId());
+        verify(policyMapper).updatePolicyFromDto(policyUpdateDto, savedPolicy);
+        verify(policyMapper).toPolicyResponse(savedPolicy);
     }
 
 }
