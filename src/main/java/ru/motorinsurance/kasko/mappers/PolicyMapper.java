@@ -1,16 +1,20 @@
 package ru.motorinsurance.kasko.mappers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.mapstruct.*;
-import ru.motorinsurance.kasko.dto.PolicyHolderDto;
+import ru.motorinsurance.common.core.dto.DriversDto;
+import ru.motorinsurance.common.core.dto.PolicyDto;
+import ru.motorinsurance.common.core.dto.PolicyHolderDto;
+import ru.motorinsurance.common.core.dto.VehicleDto;
+import ru.motorinsurance.common.core.enums.HolderType;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
+import ru.motorinsurance.common.core.enums.VehicleUsagePurpose;
 import ru.motorinsurance.kasko.dto.PolicyResponse;
 import ru.motorinsurance.kasko.dto.PolicyUpdateDto;
-import ru.motorinsurance.kasko.dto.VehicleDto;
-import ru.motorinsurance.kasko.enums.HolderType;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
-import ru.motorinsurance.kasko.enums.VehicleUsagePurpose;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.model.PolicyHolder;
 import ru.motorinsurance.kasko.model.Vehicle;
+import ru.motorinsurance.kasko.utils.JsonUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +31,12 @@ public interface PolicyMapper {
     @Mapping(target = "policyHolder.contact.phone", source = "policyHolder.phone")
     @Mapping(target = "policyHolder.contact.email", source = "policyHolder.email")
     PolicyResponse toPolicyResponse(Policy entity);
+
+    @Mapping(target = "startDate", source = "startDate", dateFormat = "dd.MM.yyyy")
+    @Mapping(target = "endDate", source = "endDate", dateFormat = "dd.MM.yyyy")
+    @Mapping(target = "policyHolder.contact.phone", source = "policyHolder.phone")
+    @Mapping(target = "policyHolder.contact.email", source = "policyHolder.email")
+    PolicyDto toPolicyDto(Policy entity);
     // Vehicle mapping
     @Mapping(target = "purchaseDate", source = "purchaseDate", dateFormat = "dd.MM.yyyy")
     Vehicle toVehicleEntity(VehicleDto dto);
@@ -84,5 +94,13 @@ public interface PolicyMapper {
 
     default String mapPolicyStatus(PolicyStatus policyStatus) {
         return policyStatus != null ? policyStatus.getRussianName() : null;
+    }
+
+    default String map(DriversDto driversDto) throws JsonProcessingException {
+        return JsonUtils.toJson(driversDto);
+    }
+
+    default DriversDto toDriversDto(String value) throws JsonProcessingException {
+        return JsonUtils.fromJson(value, DriversDto.class);
     }
 }

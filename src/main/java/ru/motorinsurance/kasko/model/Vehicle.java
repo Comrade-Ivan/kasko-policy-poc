@@ -2,10 +2,11 @@ package ru.motorinsurance.kasko.model;
 
 import lombok.*;
 import jakarta.persistence.*;
-import ru.motorinsurance.kasko.enums.VehicleUsagePurpose;
+import ru.motorinsurance.common.core.enums.VehicleUsagePurpose;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "vehicles")
@@ -41,5 +42,7 @@ public class Vehicle {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "policy_id", referencedColumnName = "policy_id")
+    @EqualsAndHashCode.Exclude
     private Policy policy;
+
 }

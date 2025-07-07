@@ -1,5 +1,6 @@
 package ru.motorinsurance.kasko;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -7,9 +8,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
+import ru.motorinsurance.common.core.dto.PolicyHolderDto;
+import ru.motorinsurance.common.core.dto.VehicleDto;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
+import ru.motorinsurance.debeziumoutbox.OutboxEventRepository;
 import ru.motorinsurance.kasko.dto.*;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
-import ru.motorinsurance.kasko.enums.VehicleUsagePurpose;
 import ru.motorinsurance.kasko.mappers.PolicyMapper;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.model.PolicyHolder;
@@ -57,6 +60,9 @@ class PolicyServiceTest {
     @Mock
     private StatusTransitionRepository statusTransitionRepository;
 
+    @Mock
+    private OutboxEventRepository eventRepository;
+
     @Test
     void createPolicy_WithNewVehicleAndNewHolder_ShouldCreateAllEntities() {
         // Arrange
@@ -87,7 +93,7 @@ class PolicyServiceTest {
         verify(vehicleRepository).findByVin(TEST_VIN);
         verify(policyHolderRepository).findByNameAndPhone(holderDto.getName(), holderDto.getContact().getPhone());
         verify(vehicleRepository).save(savedVehicle);
-        verify(policyHolderRepository, times(2)).save(savedHolder);
+        verify(policyHolderRepository).save(savedHolder);
         verify(policyRepository).save(any(Policy.class));
     }
 
@@ -133,7 +139,7 @@ class PolicyServiceTest {
 
         // Assert
         assertNotNull(result);
-        verify(policyHolderRepository, times(1)).save(any(PolicyHolder.class));
+        verify(policyHolderRepository, never()).save(any(PolicyHolder.class));
     }
 
     @Test

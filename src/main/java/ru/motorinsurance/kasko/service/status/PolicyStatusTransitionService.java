@@ -3,7 +3,7 @@ package ru.motorinsurance.kasko.service.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.service.status.rule.PolicyTransitionRulesConfig;
 import ru.motorinsurance.kasko.service.status.rule.TransitionRule;

@@ -3,7 +3,9 @@ package ru.motorinsurance.kasko.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
-import ru.motorinsurance.kasko.enums.PaymentMethod;
+import ru.motorinsurance.common.core.dto.DriversDto;
+import ru.motorinsurance.common.core.dto.VehicleDto;
+import ru.motorinsurance.common.core.enums.PaymentMethod;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,5 +21,5 @@ public class PolicyUpdateDto {
     private PaymentMethod paymentMethod;
     private Long policyHolderId;
     private VehicleDto vehicle;
-    private String drivers;
+    private DriversDto drivers;
 }

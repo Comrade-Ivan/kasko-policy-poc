@@ -22,7 +22,22 @@ spring:
       password: example
       authentication-database: admin
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:29092
+    consumer:
+      group-id: policy-service-events
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: "latest"  # или "earliest" для чтения с начала
+      enable-auto-commit: false    # Ручное управление коммитами
+      fetch-min-bytes: 1           # Не ждём накопления данных
+      fetch-max-wait-ms: 10        # Макс. время ожидания (default: 500ms)
+      max-poll-records: 100        # Записей за один poll() (default: 500)
+      connections-max-idle-ms: 30000
+      request-timeout-ms: 305000
+      max-partition-fetch-bytes: 10485760  # 10MB (для больших сообщений)
+      isolation-level: "read_committed"
+    outbox:
+      topic: policy.events
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.yaml

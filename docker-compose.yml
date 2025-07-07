@@ -133,6 +133,20 @@ services:
     depends_on:
       - elasticsearch
 
+  debezium:
+    image: debezium/connect:2.3
+    ports:
+      - "8083:8083"
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      CONFIG_STORAGE_TOPIC: debezium_configs
+      OFFSET_STORAGE_TOPIC: debezium_offsets
+      STATUS_STORAGE_TOPIC: debezium_statuses
+      KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+    volumes:
+      - ./debezium-config.json:/config/debezium-config.json
+
 
 volumes:
   postgres_data:

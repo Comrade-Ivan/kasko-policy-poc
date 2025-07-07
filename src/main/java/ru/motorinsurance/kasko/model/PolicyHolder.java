@@ -1,11 +1,8 @@
 package ru.motorinsurance.kasko.model;
 
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import jakarta.persistence.*;
-import ru.motorinsurance.kasko.enums.HolderType;
+import ru.motorinsurance.common.core.enums.HolderType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +34,7 @@ public class PolicyHolder {
     private String email;
 
     @OneToMany(mappedBy = "policyHolder", fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
     @Builder.Default
     private List<Policy> policies = new ArrayList<>(); // Один страхователь → много полисов
 }

@@ -1,6 +1,6 @@
 package ru.motorinsurance.kasko.service.status.rule;
 
-import ru.motorinsurance.kasko.enums.PolicyStatus;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
 import ru.motorinsurance.kasko.model.Policy;
 
 import java.util.HashMap;

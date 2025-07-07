@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.model.Vehicle;
 import ru.motorinsurance.kasko.service.status.PolicyStatusTransitionService;

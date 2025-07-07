@@ -2,3 +2,9 @@ databaseChangeLog:
   - include:
       file: v1/initial-schema.sql
       relativeToChangeLogFile: true
+  - include:
+      file: v1/outbox-events-table.sql
+      relativeToChangeLogFile: true
+  - include:
+      file: v1/outbox-events-change-column-names.sql
+      relativeToChangeLogFile: true

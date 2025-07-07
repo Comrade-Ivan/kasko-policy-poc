@@ -1,9 +1,12 @@
 package ru.motorinsurance.kasko;
 
+import ru.motorinsurance.common.core.dto.ContactDto;
+import ru.motorinsurance.common.core.dto.PolicyHolderDto;
+import ru.motorinsurance.common.core.dto.VehicleDto;
+import ru.motorinsurance.common.core.enums.HolderType;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
+import ru.motorinsurance.common.core.enums.VehicleUsagePurpose;
 import ru.motorinsurance.kasko.dto.*;
-import ru.motorinsurance.kasko.enums.HolderType;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
-import ru.motorinsurance.kasko.enums.VehicleUsagePurpose;
 import ru.motorinsurance.kasko.model.Policy;
 import ru.motorinsurance.kasko.model.PolicyHolder;
 import ru.motorinsurance.kasko.model.Vehicle;

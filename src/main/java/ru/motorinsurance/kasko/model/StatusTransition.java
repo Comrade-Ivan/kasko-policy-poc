@@ -31,5 +31,6 @@ public class StatusTransition {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "policy_id", referencedColumnName = "policy_id")
+    @EqualsAndHashCode.Exclude
     private Policy policy;
 }

@@ -1,6 +1,6 @@
 package ru.motorinsurance.kasko.service.status.rule;
 
-import ru.motorinsurance.kasko.enums.PolicyStatus;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
 import ru.motorinsurance.kasko.model.Policy;
 
 import java.util.HashSet;
@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public record TransitionRule (Set<PolicyStatus> allowedTargetStatuses,Map<PolicyStatus, Map<Predicate<Policy>, String>> guardsMap) {
+public record TransitionRule (Set<PolicyStatus> allowedTargetStatuses, Map<PolicyStatus, Map<Predicate<Policy>, String>> guardsMap) {
     public void validateTransition(PolicyStatus targetStatus, Policy policy) {
         if (!allowedTargetStatuses.contains(targetStatus)) {
             throw new IllegalStateException("Переход в статус запрещен. Разрешены только: " + allowedTargetStatuses);

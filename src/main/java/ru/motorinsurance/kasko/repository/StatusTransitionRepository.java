@@ -3,7 +3,7 @@ package ru.motorinsurance.kasko.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
 import ru.motorinsurance.kasko.model.StatusTransition;
 
 import java.util.List;

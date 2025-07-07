@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.motorinsurance.common.core.dto.PolicyHolderDto;
+import ru.motorinsurance.common.core.dto.VehicleDto;
 
 import java.time.LocalDate;
 

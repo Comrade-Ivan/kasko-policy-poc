@@ -13,14 +13,14 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
+import ru.motorinsurance.debeziumoutbox.OutboxEvent;
+import ru.motorinsurance.debeziumoutbox.OutboxEventRepository;
 import ru.motorinsurance.kasko.dto.PolicyChangeStatusRequest;
 import ru.motorinsurance.kasko.dto.PolicyCreateRequest;
 import ru.motorinsurance.kasko.dto.PolicyResponse;
 import ru.motorinsurance.kasko.dto.PolicyUpdateDto;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
 import ru.motorinsurance.kasko.model.Policy;
-import ru.motorinsurance.kasko.model.PolicyHolder;
-import ru.motorinsurance.kasko.model.Vehicle;
 import ru.motorinsurance.kasko.repository.PolicyRepository;
 import ru.motorinsurance.kasko.service.PolicyService;
 
@@ -51,6 +51,9 @@ class KaskoApplicationTests {
 
     @Autowired
     private PolicyRepository policyRepository;
+
+    @Autowired
+    private OutboxEventRepository eventRepository;
 
     private final String API_V1 = "/api/v1";
 
@@ -101,6 +104,14 @@ class KaskoApplicationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.policyId").exists())
                 .andExpect(jsonPath("$.status").value(PolicyStatus.PRE_CALCULATION.getRussianName()));
+
+        Policy createdPolicy = policyRepository.findAll().getFirst();
+
+        OutboxEvent publishedEvent = eventRepository.findBySentFalseOrderByCreatedAtAsc().getFirst();
+
+        assertEquals("policy", publishedEvent.getAggregateType());
+        assertEquals(createdPolicy.getPolicyId(), publishedEvent.getAggregateId());
+        assertEquals("CREATED", publishedEvent.getEventType());
     }
 
     @Test
@@ -157,7 +168,6 @@ class KaskoApplicationTests {
                 .endDate(newEndDate)
                 .premiumAmount(newPremiumAmount)
                 .build();
-        log.info("------------------PERFORM REQUEST-----------------------");
         mockMvc.perform(
                 patch(API_V1 + "/policies/" + createResponse.getPolicyId())
                         .header("Authorization", basicAuthHeader())

@@ -1,14 +1,12 @@
 package ru.motorinsurance.kasko.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import ru.motorinsurance.kasko.enums.PaymentMethod;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
+import ru.motorinsurance.common.core.dto.DriversDto;
+import ru.motorinsurance.common.core.enums.PaymentMethod;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,14 +15,17 @@ import java.util.List;
 
 @Entity
 @Table(name = "policies")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Policy {
 
     @Id
     @Column(name = "policy_id", length = 20)
+    @EqualsAndHashCode.Include
     private String policyId;
 
     @Column(name = "created_at", nullable = false)
@@ -62,15 +63,18 @@ public class Policy {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "drivers", columnDefinition = "jsonb")
-    private String drivers;
+    private DriversDto drivers; //TODO: переделать со String на Dto
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "holder_id")
+    @ToString.Exclude
     private PolicyHolder policyHolder;
 
     @OneToOne(mappedBy = "policy", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Vehicle vehicle;
 
     @OneToMany(mappedBy = "policy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<StatusTransition> statusTransitions;
 }

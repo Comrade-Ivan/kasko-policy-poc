@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
-import ru.motorinsurance.kasko.validation.ValidEnumValue;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
+import ru.motorinsurance.common.core.validation.ValidEnumValue;
 
 @Data
 @Builder

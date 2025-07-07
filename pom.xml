@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ru.motorinsurance</groupId>
-	<artifactId>kasko</artifactId>
+	<artifactId>kaskoPolicyService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>kasko</name>
 	<description>PoC project for Casco Insurance</description>

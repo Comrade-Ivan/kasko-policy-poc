@@ -28,7 +28,7 @@ public class PolicyController {
         PolicyResponse response = policyService.createPolicy(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/api/v1/policies/{id}")
+                .replacePath("/api/v1/policies/{id}")
                 .buildAndExpand(response.getPolicyId())
                 .toUri();
 

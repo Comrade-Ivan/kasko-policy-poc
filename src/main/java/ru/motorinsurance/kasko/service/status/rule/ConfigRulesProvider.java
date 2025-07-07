@@ -1,7 +1,7 @@
 package ru.motorinsurance.kasko.service.status.rule;
 
 import org.springframework.stereotype.Component;
-import ru.motorinsurance.kasko.enums.PolicyStatus;
+import ru.motorinsurance.common.core.enums.PolicyStatus;
 
 import java.util.Map;
 
